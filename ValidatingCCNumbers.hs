@@ -32,3 +32,9 @@ sumNums (x:xs) = x + (sumNums xs)
 -- Sums a list of doubled digits
 sumDigits :: Integer -> Integer
 sumDigits n = sumNums $ doubleEveryOther n
+
+-- Indicates if an integer is a valid credit card number
+validate :: Integer -> Bool
+validate n
+    | (sumDigits n) `mod` 10 == 0 = True
+    | otherwise                   = False
