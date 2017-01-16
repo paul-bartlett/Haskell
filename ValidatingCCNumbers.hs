@@ -1,9 +1,3 @@
-module Main where
-
-main :: IO ()
-main = do
-  putStrLn "hello world"
-
 -- Convert positive Integers to a list of digits
 toDigits :: Integer -> [Integer]
 toDigits n
