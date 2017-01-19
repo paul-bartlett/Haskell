@@ -3,6 +3,15 @@ module LogAnalysis where
 
 import Log
 
+-- Match message type from letter
+messageType :: String -> MessageType
+messageType x = case x of
+                'i' -> Info
+                'w' -> Warning
+                 _  -> Error
+
 -- Parse message
 parseMessage :: String -> LogMessage
 parseMessage = LogMessage . take 2 . lines
+
+
