@@ -19,7 +19,10 @@ parse s  = map parseMessage $ lines s
 insert :: LogMessage -> MessageTree -> MessageTree
 insert (Unknown _) tree = tree
 insert log@(LogMessage _ _ _) Leaf = Node Leaf log Leaf
-insert log1@(LogMessage _ time1 _) (Node l log2@(LogMessage _ time2 _ r)
+insert log1@(LogMessage _ time1 _) (Node l log2@(LogMessage _ time2 _) r)
     | time1 > time2 = Node l log2 (insert log1 r)
     | otherwise     = Node (insert log1 l) log2 r
 insert _ tree = tree
+
+build :: [LogMessage] -> MessageTree
+build logmessages = map insert $ unlines logmessages $ Leaf
