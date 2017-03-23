@@ -24,5 +24,15 @@ insert log1@(LogMessage _ time1 _) (Node l log2@(LogMessage _ time2 _) r)
     | otherwise     = Node (insert log1 l) log2 r
 insert _ tree = tree
 
+-- Builds a MessageTree from a list of log messages starting with a leaf
 build :: [LogMessage] -> MessageTree
-build logmessages = map insert $ unlines logmessages $ Leaf
+build [] = Leaf
+build (logmessage:logmessages) = insert logmessage (build logmessages)
+
+-- Takes a sorted MessageTree and produces a sorted list of LogMessages from smallest to largest timestamp
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node l log r) = inOrder l ++ [log] ++ inOrder r
+
+-- Takes an unsorted list of LogMessages and returns a sorted list of messages with severity >50
+whatWentWrong :: [LogMessage] -> [String]
