@@ -34,13 +34,14 @@ inOrder :: MessageTree -> [LogMessage]
 inOrder Leaf = []
 inOrder (Node l lmsg r) = inOrder l ++ [lmsg] ++ inOrder r
 
--- Filters LogMessages with defined severity
+-- Filters LogMessage with defined severity and outputs the message
 logFilter :: Int -> LogMessage -> [String]
 logFilter severity (LogMessage (Error err) _ message)
     | err > severity = [message]
     | otherwise      = []
 logFilter _ _ = []
 
+-- Filters out a list of logmessages and outputs a list of the messages
 logFilters :: [LogMessage] -> [String]
 logFilters [] = []
 logFilters (lmsg:lmsgs) = logFilter 50 lmsg ++ logFilters lmsgs
