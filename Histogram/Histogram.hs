@@ -13,8 +13,11 @@ outputSymbol :: Integer -> [Integer] -> String
 outputSymbol num (x:xs)
     | x < num    = " " ++ outputSymbol num xs
     | x >= num   = "*" ++ outputSymbol num xs
-outputSymbol _ _ = []
+outputSymbol _ _ = "\n"
+
+histoPlot :: [Integer] -> String
+histoPlot lst = foldr (++) [] $ map (`outputSymbol` lst) [9,8..1]
 
 --Takes an list of Integers between 0 and 9 and outputs a vertical histogram
-histogram :: [Integer] -> String
-histogram lst = foldr (++) [] $ map (`outputSymbol` lst) [1..9]
+--histogram :: [Integer] -> String
+--histogram lst = (histoPlot $ countMult lst) ++ "0123456789"
