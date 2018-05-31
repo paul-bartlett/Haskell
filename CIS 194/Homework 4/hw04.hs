@@ -28,9 +28,9 @@ foldTree = foldr insertTree Leaf
 insertTree :: a -> Tree a -> Tree a
 insertTree val Leaf = Node 0 (Leaf) val (Leaf)
 insertTree val (Node n l x r)
-    | heightL > heightR = Node n     l val insertR
     | heightL < heightR = Node n     insertL val r
-    | otherwise         = Node (h+1) insertL val r
+    | heightL > heightR = Node n     l val insertR
+    | otherwise         = Node (h+1) l val insertR
     where heightL = heightTree l 
           heightR = heightTree r
           insertL = insertTree x l
