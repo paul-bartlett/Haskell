@@ -26,7 +26,7 @@ foldTree = foldr insertTree Leaf
 
 -- Inserts a new LogMessage into an existing sorted MessageTree
 insertTree :: a -> Tree a -> Tree a
-insertTree val Leaf = Node 0 (Leaf) val (Leaf)
+insertTree val Leaf = Node 0 Leaf val Leaf
 insertTree val (Node n l x r)
     | heightL < heightR = Node n     insertL val r
     | heightL > heightR = Node n     l val insertR
