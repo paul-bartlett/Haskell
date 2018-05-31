@@ -2,8 +2,8 @@
 fun1 :: [Integer] -> Integer
 fun1 [] = 1
 fun1 (x:xs)
-   | even x    = (x - 2) * fun1 xs
-   | otherwise = fun1 xs
+    | even x    = (x - 2) * fun1 xs
+    | otherwise = fun1 xs
 
 fun1' :: [Integer] -> Integer
 fun1' = product . map (\x -> x - 2) . filter even
@@ -18,17 +18,25 @@ fun2' = sum . filter even . takeWhile (>1) . iterate (\n -> if even n then n `di
 
 -- Exercise 2
 data Tree a = Leaf
-			| Node Integer (Tree a) a (Tree a)
-	deriving (Show, Eq)
+            | Node Integer (Tree a) a (Tree a)
+    deriving (Show, Eq)
 
 foldTree :: [a] -> Tree a
-foldTree = foldr1 (\x -> insert x)
+foldTree = foldr insertTree Leaf
 
 -- Inserts a new LogMessage into an existing sorted MessageTree
-insert :: Integer -> a -> Tree a
-insert height val =
-insert lg@(LogMessage _ _ _) Leaf = Node Leaf lg Leaf
-insert log1@(LogMessage _ time1 _) (Node l log2@(LogMessage _ time2 _) r)
-    | time1 > time2 = Node l log2 (insert log1 r)
-    | otherwise     = Node (insert log1 l) log2 r
-insert _ tree = tree
+insertTree :: a -> Tree a -> Tree a
+insertTree val Leaf = Node 0 (Leaf) val (Leaf)
+insertTree val (Node n l x r)
+    | heightL > heightR = Node n     l val insertR
+    | heightL < heightR = Node n     insertL val r
+    | otherwise         = Node (h+1) insertL val r
+    where heightL = heightTree l 
+          heightR = heightTree r
+          insertL = insertTree x l
+          insertR = insertTree x r
+          h       = heightTree insertR 
+
+heightTree :: Tree a -> Integer
+heightTree Leaf = 0
+heightTree (Node n l val r) = n
