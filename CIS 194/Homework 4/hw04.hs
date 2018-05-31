@@ -21,10 +21,11 @@ data Tree a = Leaf
             | Node Integer (Tree a) a (Tree a)
     deriving (Show, Eq)
 
+-- Creates a binary tree from a list of values
 foldTree :: [a] -> Tree a
 foldTree = foldr insertTree Leaf
 
--- Inserts a new LogMessage into an existing sorted MessageTree
+-- Inserts a Node into a binary tree while keeping it balanced
 insertTree :: a -> Tree a -> Tree a
 insertTree val Leaf = Node 0 Leaf val Leaf
 insertTree val (Node n l x r)
@@ -40,3 +41,14 @@ insertTree val (Node n l x r)
 heightTree :: Tree a -> Integer
 heightTree Leaf = 0
 heightTree (Node n l val r) = n
+
+-- Exercise 3
+xor :: [Bool] -> Bool
+xor = foldr1 (/=)
+
+map' :: (a -> b) -> [a] -> [b]
+map' f xs = foldr (\x acc -> f x : acc) [] xs
+
+-- Exercise 4
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram =
