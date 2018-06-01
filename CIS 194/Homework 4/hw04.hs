@@ -50,5 +50,10 @@ map' :: (a -> b) -> [a] -> [b]
 map' f xs = foldr (\x acc -> f x : acc) [] xs
 
 -- Exercise 4
+-- Filters out non primes using the Sieve of Sundaram
 sieveSundaram :: Integer -> [Integer]
-sieveSundaram =
+sieveSundaram n = [ 2 * i + 1 | i <- [1..n], not $ elem i (nonPrime n)]
+
+-- Generates a list of all non-prime numbers up to n
+nonPrime :: Integer -> [Integer]
+nonPrime n = [ i + j + 2 * i * j | i <- [1..n], j <- [1..n]]
