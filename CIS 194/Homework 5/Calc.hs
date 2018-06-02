@@ -1,15 +1,19 @@
 {-# OPTIONS_GHC -Wall #-}
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+
 module Calc where
 
 import ExprT
 import Parser
+import StackVM
+import Data.Maybe
 
 -- Exercise 1
 -- Adds and multiplies basic expressions of type ExprT
 eval :: ExprT -> Integer
-eval (Lit val)       = val
-eval (Add exp1 exp2) = (eval exp1) + (eval exp2)
-eval (Mul exp1 exp2) = (eval exp1) * (eval exp2)
+eval (ExprT.Lit val)       = val
+eval (ExprT.Add exp1 exp2) = (eval exp1) + (eval exp2)
+eval (ExprT.Mul exp1 exp2) = (eval exp1) * (eval exp2)
 
 -- Exercise 2
 -- Parses expression and evaluates if valid
@@ -17,21 +21,21 @@ evalStr :: String -> Maybe Integer
 evalStr s = case p of
           Just val -> Just (eval val)
           Nothing  -> Nothing
-          where p = parseExp Lit Add Mul s
-
-instance Expr ExprT where 
-    lit = Lit
-    add = Add
-    mul = Mul
-
-reify :: ExprT -> ExprT
-reify = id
+          where p = parseExp ExprT.Lit ExprT.Add ExprT.Mul s
 
 -- Exercise 3
 class Expr a where
     lit :: Integer -> a
     add :: a -> a -> a
     mul :: a -> a -> a
+
+instance Expr ExprT where 
+    lit = ExprT.Lit
+    add = ExprT.Add
+    mul = ExprT.Mul
+
+reify :: ExprT -> ExprT
+reify = id
 
 -- Exercise 4
 instance Expr Integer where
@@ -73,3 +77,18 @@ testMM = testExp
 
 testSat :: Maybe Mod7
 testSat = testExp
+
+-- Exercise 5
+instance Expr Program where
+    lit val = [StackVM.PushI val]
+    add exp1 exp2 = exp1 ++ exp2 ++ [StackVM.Add]
+    mul exp1 exp2 = exp1 ++ exp2 ++ [StackVM.Mul]
+
+testProg :: Maybe StackVM.Program
+testProg = testExp
+
+compileProg :: String -> Either String StackVal
+compileProg = stackVM . fromJust . compile
+
+compile :: String -> Maybe Program
+compile = parseExp lit add mul
