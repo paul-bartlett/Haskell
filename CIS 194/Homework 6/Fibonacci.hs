@@ -39,3 +39,18 @@ streamMap f (Cons x xs) = Cons (f x) (streamMap f xs)
 -- Generates a Stream from a seed
 streamFromSeed :: (a -> a) -> a -> Stream a
 streamFromSeed f x = Cons x (streamFromSeed f $ f x)
+
+-- Exercise 5
+-- Contains the infinite list of natural numbers (0,1,2,...)
+nats :: Stream Integer
+nats = streamFromSeed (+1) 0
+
+-- Creates an infinite stream of the ruler function
+ruler :: Stream Integer
+ruler = streamMap (\x -> power2 x 0) $ streamFromSeed (+1) 1
+
+-- Returns the max 2^n that an integer is divisible by
+power2 :: Integer -> Integer -> Integer
+power2 c n 
+    | c `mod` (2^(n+1)) == 0 = power2 c (n+1)
+    | otherwise              = n
