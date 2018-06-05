@@ -26,13 +26,11 @@ tag _              = mempty
 -- Finds the JoinList element at the specified index i.
 -- (indexJ i jl) == (jlToList jl !!? i), but O(log n) versus O(n)
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
-indexJ i (Single _ a) 
-    | i == 0    = Just a
-    | otherwise = Nothing
+indexJ i (Single _ a) = Just a
 indexJ i (Append m l1 l2)
     | i < 0 || i > sizej = Nothing
     | i < sizel1         = indexJ i l1
-    | otherwise          = indexJ (sizej - sizel1) l2
+    | otherwise          = indexJ (i - sizel1) l2
       where sizej  = getSize $ size m
             sizel1 = getSize $ size $ tag l1
 indexJ _ _ = Nothing
