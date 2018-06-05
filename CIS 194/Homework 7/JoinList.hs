@@ -43,7 +43,7 @@ dropJ n l@(Single _ _)
 dropJ n l@(Append m l1 l2)
     | n >= sizej  = Empty
     | n >= sizel1 = dropJ (n-sizel1) l2
-    | n > 0       = dropJ (n-1) l1 +++ l2
+    | n > 0       = dropJ n l1 +++ l2
     | otherwise   = l
       where sizej  = getSize $ size m
             sizel1 = getSize $ size $ tag l1
@@ -58,7 +58,6 @@ takeJ n l@(Append m l1 l2)
     | n >= sizej  = l
     | n >= sizel1 = l1 +++ takeJ (n-sizel1) l2
     | n > 0       = takeJ n l1
-    | otherwise   = l
       where sizej  = getSize $ size m
             sizel1 = getSize $ size $ tag l1
 takeJ _ _ = Empty
