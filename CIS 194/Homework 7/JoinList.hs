@@ -5,7 +5,7 @@ module JoinList where
 
 import Data.Monoid
 
-import StringBuffer
+import Buffer
 import Editor
 import Sized
 import Scrabble
@@ -14,6 +14,35 @@ data JoinList m a = Empty
                   | Single m a
                   | Append m (JoinList m a) (JoinList m a)
     deriving (Eq, Show)
+
+-- Improved buffer to work with JoinList Size and Scrabble™ Score indexes
+instance Buffer (JoinList (Score, Size) String) where
+    -- Convert a JoinList buffer to a String.
+    toString     = unlines . jlToList
+
+    -- Create a JoinList buffer from a String.
+    fromString   = foldr (\s acc -> acc +++ jlScoreSize s) Empty . lines
+                   where jlScoreSize s = Single (scoreString s, 1) s
+
+    -- Extract the nth line (0-indexed) from a JoinList buffer. Return Nothing
+    -- for out-of-bounds indices.
+    line i jl    = indexJ i jl
+
+    -- @replaceLine n l jl returns a modified version of JoinList,
+    -- with the @n@th line replaced by @l@.  If the index is
+    -- out-of-bounds, the buffer should be returned unmodified.
+    replaceLine n l jl = takeJ n jl +++ fromString l +++ dropJ (n+1) jl
+
+    -- Compute the number of lines in the buffer.
+    numLines     = getSize . snd . tag
+
+    -- Compute the value of the buffer, i.e. the amount someone would
+    -- be paid for publishing the contents of the buffer.
+    value        = getScore . fst . tag
+
+-- Starts the editor using JoinList for improved performance
+main :: IO ()
+main = runEditor editor (fromString "JoinList buffer" :: (JoinList (Score, Size) String))
 
 -- An append function using the monoidal annotation of both lists
 (+++) :: Monoid m => JoinList m a -> JoinList m a -> JoinList m a
@@ -83,6 +112,8 @@ _      !!? i | i < 0 = Nothing
 (x:_)  !!? 0         = Just x
 (_:xs) !!? i         = xs !!? (i-1)
 
+-- Used to test indexJ, takeJ, and dropJ
+test1 :: JoinList Size String
 test1 = Append (Size 4)
             (Append (Size 3)
                 (Single (Size 1) "y")
