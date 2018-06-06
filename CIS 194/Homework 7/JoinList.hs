@@ -4,9 +4,11 @@
 module JoinList where
 
 import Data.Monoid
+
 import StringBuffer
 import Editor
 import Sized
+import Scrabble
 
 data JoinList m a = Empty
                   | Single m a
@@ -26,7 +28,7 @@ tag _              = mempty
 -- Finds the JoinList element at the specified index i.
 -- (indexJ i jl) == (jlToList jl !!? i), but O(log n) versus O(n)
 indexJ :: (Sized b, Monoid b) => Int -> JoinList b a -> Maybe a
-indexJ i (Single _ a) = Just a
+indexJ _ (Single _ a) = Just a
 indexJ i (Append m l1 l2)
     | i < 0 || i > sizej = Nothing
     | i < sizel1         = indexJ i l1
@@ -62,6 +64,10 @@ takeJ n l@(Append m l1 l2)
             sizel1 = getSize $ size $ tag l1
 takeJ _ _ = Empty
 
+-- Uses Scrabble™ rules to use word scores as indexes
+scoreLine :: String -> JoinList Score String
+scoreLine s = Single (scoreString s) s
+
 -- Safe indexing function used for testing other functions
 -- where indexJ i jl           == jlToList jl !!? i,
 --       jlToList (dropJ n jl) == drop n (jlToList jl),
@@ -74,8 +80,8 @@ jlToList (Append _ l1 l2) = jlToList l1 ++ jlToList l2
 (!!?) :: [a] -> Int -> Maybe a
 []     !!? _         = Nothing
 _      !!? i | i < 0 = Nothing
-(x:xs) !!? 0         = Just x
-(x:xs) !!? i         = xs !!? (i-1)
+(x:_)  !!? 0         = Just x
+(_:xs) !!? i         = xs !!? (i-1)
 
 test1 = Append (Size 4)
             (Append (Size 3)
