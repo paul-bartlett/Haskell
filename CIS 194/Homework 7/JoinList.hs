@@ -30,7 +30,7 @@ indexJ i (Single _ a) = Just a
 indexJ i (Append m l1 l2)
     | i < 0 || i > sizej = Nothing
     | i < sizel1         = indexJ i l1
-    | otherwise          = indexJ (i - sizel1) l2
+    | otherwise          = indexJ (i-sizel1) l2
       where sizej  = getSize $ size m
             sizel1 = getSize $ size $ tag l1
 indexJ _ _ = Nothing
