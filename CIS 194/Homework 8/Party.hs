@@ -5,6 +5,8 @@ module Party where
 
 import Employee
 
+import Data.Tree
+
 -- Adds an Employee to the GuestList
 glCons :: Employee -> GuestList -> GuestList
 glCons emp (GL emps f) = GL (emp : emps) (f + empFun emp)
@@ -19,3 +21,11 @@ moreFun :: GuestList -> GuestList -> GuestList
 moreFun gl1 gl2 
     | gl1 > gl2 = gl1
     | otherwise = gl2
+
+-- Fold function for Data.Tree
+treeFold :: (a -> [b] -> b) -> Tree a -> b
+treeFold f = go where
+    go (Node x ts) = f x (map go ts)
+
+-- Takes an employee and the optimal GuestList for each subdivision under him
+combineGLs :: Employee -> [GuestList] -> GuestList
